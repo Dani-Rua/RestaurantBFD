@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-2
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  mongo:
+    image: mongo:latest
+    container_name: database
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data
+  
+  order-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-app
+    ports:
+      - "8091:8091"
+    depends_on:
+      - rabbitmq
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+
+  inventario_app:
+    build:
+      context: ./inventario
+      dockerfile: Dockerfile
+    container_name: inventario_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - rabbitmq
+    environment:
+      - GO_ENV=production
+      - DATABASE=inventario
+      - COLLECTION_INGREDIENTE=ingrediente
+      - COLLECTION_RECETA=receta
