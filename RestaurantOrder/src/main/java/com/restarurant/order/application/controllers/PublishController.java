@@ -21,11 +21,8 @@ public class PublishController {
 
 
     @PostMapping
-    public ResponseEntity<String> send(@Valid @RequestBody MessageDto dto) {
-        if (dto == null) {
-            return ResponseEntity.badRequest().body("DTO fue null");
-        }
-        publisher.publish(dto);
+    public ResponseEntity<String> send(@RequestBody MessageDto message) {
+        publisher.publish(message);
         return ResponseEntity.accepted().body("Mensaje enviado a RabbitMQ");
     }
 }

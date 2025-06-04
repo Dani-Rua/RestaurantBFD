@@ -16,11 +16,9 @@ public class OrderPublisherImpl implements IOrderPublisherService {
 
     @Override
     public void publish(MessageDto message) {
-        if (message == null) {
-            throw new IllegalArgumentException("El mensaje no puede ser nulo");
+        if (message == null || message.getIngrediente_id() == null || message.getCantidad() <= 0) {
+            throw new IllegalArgumentException("Invalid message data");
         }
-        System.out.println("Enviando a RabbitMQ: " + message);
-        System.out.println("Clase del objeto: " + message.getClass());
         rabbitTamplate.convertAndSend(
                 RabbitConfig.EXCHANGE,
                 RabbitConfig.ROUTING_KEY,
