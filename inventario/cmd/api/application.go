@@ -74,7 +74,7 @@ func mongoClient(collection string, database string) (*mongo.Collection, error) 
 }
 
 func messageinClient() *messaging.RabbitMQClient {
-	rabbitClient, err := messaging.NewRabbitMQClient("amqp://guest:guest@rabbitmq-2:5672/")
+	rabbitClient, err := messaging.NewRabbitMQClient("amqp://guest:guest@rabbitmq:5672/")
 	if err != nil {
 		log.Fatalf("Error conectando a RabbitMQ: %v", err)
 	}

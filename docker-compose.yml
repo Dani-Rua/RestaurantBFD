@@ -3,13 +3,16 @@ version: "3.8"
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq-2
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+    - restaurant_net
+
   mongo:
     image: mongo:latest
     container_name: database
@@ -21,10 +24,12 @@ services:
       - "27017:27017"
     volumes:
       - ./data:/data
+    networks:
+    - restaurant_net
   
   order-app:
     build:
-      context: .
+      context: ./RestaurantOrder
       dockerfile: Dockerfile
     container_name: order-app
     ports:
@@ -36,6 +41,8 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
+    networks:
+    - restaurant_net
     
 
   inventario_app:
@@ -53,4 +60,11 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-    
+    networks:
+    - restaurant_net
+
+networks:
+  restaurant_net:
+    driver: bridge
+
+
